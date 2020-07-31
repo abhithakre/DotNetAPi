@@ -1,21 +1,33 @@
-sudo: required
-
+language: csharp
+mono: none
+dotnet: 3.1
+dist: xenial
+before_script:
+- export PATH=$PATH:/home/travis/.dotnet/tools
+script:
+- find .
+- env
+- ls -la
+- dotnet tool install --global dotnet-sonarscanner
+- export PATH=$PATH:/home/travis/.dotnet/tools
+- dotnet restore
+- dotnet sonarscanner begin /d:sonar.host.url=$SONAR_HOST_URL /k:$SONAR_PROJECT_KEY /o:$SONAR_ORGANISATION /d:sonar.login=$SONAR_TOKEN
+- rm -rf sonar-project.properties # hacky
+- dotnet build .
+- dotnet sonarscanner end  /d:sonar.login=$SONAR_TOKEN
 addons:
   sonarcloud:
-    organization: "sonarcloud"
+    organization: githubismicrosoft
     token:
-      secure: "ksdAQnt8GuziAxw5P3QvVb8+5grIbRWo3ek948PiwI7A17b05SVD6Lbe7ViP2CGh55DB3hSD87oAzorvP6d3AQlFLGXQsHdwW5doTkF0HH7Kz/lhLYDvt3kEME7isawDsjBjvQT9ldkt8sEf7z9n3Ccmt9CwuxguNFmY+920+HXD6ORUYWtBOq1DbcoWms/1EuAQum7Yus5OOMMDIhOJJYbesIYk03uKwXYZJqT5Yom4b6HrjLpVXB575vmm73mIr9pW3uViXYxJIqa+j2E93/ERiWSnVnre6DZ61JQnOBLPW9ek1QvpGmNodVytibEVNjYvgg/qIhhJvINp7ZXPGDSv/aPBnJ721W5fLWGv4wapuYtxWrbhvRNh9kzDg+tkFl1Ab7Tg40mwDIuqxfufJarW6lCLPWsYer5ouiCcjAufDHPbCikxIqX0bIMx3LfRVM/jYx41LkSh/UikFyBn6QJZako/ZQ6PbJ54hNuzt+Kog5aKNZYbZljqKIa1wS7rkIkAtXwFe8kX3t7KkXZH4Z7hlOYAr5P0dJyvp9h4LoHhV7Xss61aTfj69UoCCBwGI4t4LHj4+oyJrC+tMh8Ha8TYkPgeAn2G1GKjV0R16yxDLl+600xeO5KFtcPAka+eggkqgxvrkVk7Qe+LALYm7Y7uBEE14ACjONiU4xVT8js="
-
-script:
-  - sonar-scanner
-
-cache:
-  directories:
-    - '$HOME/.sonar/cache'
-
-# Don't copy the following part if you are using this project as a starting point of yours
-notifications:
-  email: false
-  webhooks:
-    - secure: "flBSNz9qtLM8L9tAbMukPtzONeJaCVmo0Xmg3f2vJbovp8le/7Ips63Q2AxXPWYI9c+S+3eQFTKG/ry1N+VbgTEXJa/QS0f/yZDTE58sgHKRF2oUCV4U+xLVCmW59zdvK4yoVDpDSmomTW9g5RDaPqH6zj/pcK3jemUZgkIquT69huljTuTh52wtocXyDfSIhWRsYW5qcwqKqdAp92EROCVHCG731fqT/xlIoUhw9U9+7jewhUXUUUH3TsNv3HDLA8JilkCRLgw7udMBl/fEjZx77WLePiiOn0DsFY69agm1iwWF+elU9zly6VCSr81EmaailM6zmzusnkqjGca3mzXwSzmr2Ta35551BiG1lOmxsP65AxVzXeKbhUUFxoNV2I2fv6oy5mnMDCN+MV+Qu/YYw3B57c/e+BkGTh4lu1AY6zB9pN/FrbX0vIQ+re4rAC1M/ynxX6NsmsNVtjYY9VVQTqFrPoubZxki5YltS7n65zrmGW55ZOCLt09d7HU3AJBu+JBkwCoIC1Ctx/gif8Yp0aaSgA3Y/hH5ILEpl3pTYzy3QZS3FhI0+swbrHVPqYlDWooNfoZ3IimfP/TSItV2rJcCOnNoVgQTqCUXtZO0Yxwtoh/YieYLPBP1b3bbowC0yNk9d6VkuxLmquU/bhbRgc30Rc0KtoxkFtrsrw0="
-  on_start: always
+    # Encrypted value login
+      secure: "o5M0DR5SpfIjIR9SgyQAMwmDQy5sbnO4Zi9HBFKqZIDtsc0aUK0ciS0CXY/3BLL2QfvJTZIt2fN26EzsJwc8g5reGFFjGUlrFsXiHO9kUnkkyZF+NQ1/9GJ27V1IY+XzHccdVbe1U3HLMaWllBCe18KiL3NLkBwPJK0uK82B78u3O30oQHy3382aodLomuuEyriAX+sxVA/K9JeHlqJbmCDdkz4DNTQJ+YI6gQ4tHheIQScoMF4lDeVmqeSWUYEqChVR9EDFsGS5njwNh96RH4gTh1Y8XxZGYKbrPPaTYbU3iKi1ZQOoQozDcMQ7zhn4J4l3qmLIwG6NTbhwbtEea1sh8F3Wl9OZdv36Mj0qm18z02io29cN1cL1A8UT+37dgN1jqMltoVV8NkYtZe2/PT0Mdy+xU68AiBV3ll85asvXy3QGkQCmydG7JsVTZqTOF1Wnqhw2L9zgi6xmTeB4xJJEJ7gBfPOZO9G2hP7pYBoJwi02dMU+SyF4wEEmEtkLkxreiMb0xWKCDRi0L/grV0RaUFcyneN2d2Eo2DrKIEiK9VrvV6XUdRtushYJ8B9aG7R14xiw2e5gr5gQbMTBczwd9Tbwf9bPhRwaYLDWRbuiMWGlsNTwKvyQstBTrcpbWr5VkMboy3bRZRNAeiXm/bkQ/lF5FgdgeU0yyhrG6zI="
+env:
+  global:
+  - SONAR_HOST_URL="https://sonarcloud.io"
+  - SONAR_PROJECT_KEY="abhithakre_DotNetApi"
+  - SONAR_ORGANISATION="abhithakre"
+  - SONAR_PROJECT_NAME=apiProject # Display name
+  - SONAR_PROJECT_VERSION=v0.1.1 # May not be automatically used with Sonar Scanner MSBuild. $Version conflicts with NuGet
+  - secure: LVjr2rNhZ+gei5CbJIf8EWow/8fY9Qkw7mTc9eyv1LB+pAdqclJfbv6Xgwfpvdn5S5VWwN4DnwTroZPJtaPN9nVEujBk7osraURY0HeLlRZQQrasXnQ6E/TEEXgwgGGgkoH1kzZVIhLCJBfSRfLGFbKI+qNkWLVtO5um//JiKDmus0XDVV3CS3BiuLl1BzvPiMoMqxq8JNnT88QX8jxU5EwtcNgZtvd33fSEsr2CTBmZII7uMZpitJ7X6lp+d1M61bYIXDgzaBDMwkc2iOeLx+oKuPdxf8bqqC11a0wh5VAVrglZY9d2IwxfBus2IB3t30nXKHJ/PDwl8/VSGaOUoTRY5VR91TLhRp3quX1emjgBuSPr5QqqXXbxugtHDwcBbWoVkyGmg1Qy88P6og7HsExR/Ho4Ji9eLkoRILBSpyftf8KGhqS7U/7hj18U4UkTyzqGhCol2ojW7JVG6Ki47XPd0C9MKEGvnVdBq/NYJjZ1J4/MnLx/Mn4U+L/73i6Y/9tNcl1+4WLdGmiA97tXqxLKeC/bOq60h/hbugtBT2hZ7nDRS3NwZbCPCP3Nw1+X0WyVwyQYbumftQDXagagKyKzLeFBZIsNZ2OMkD1QIaCbhHwKIus+RM6wZChhxRfQBtgClf7xTai2Pl9iTjOnIuhmW66OmeloMgd6XyaDJeU=
+  #$SONAR_TOKEN encrypted variable key pair for sonar.login
+  - secure: c1asEtg5qfMdwWYBpnfhTek/agX9QqOSS+1GUt2JACJzB9GwTHrb9mYkD9J+uyqRNTxC6IY6fSGzTVg9auuxiaUFsD3kW/n55+7G7QV5e96QEUqKpBlVVPYj0kDBOZlKaRaoupDliWWbqbMAaNPN1e6l1ykV6lPee45xsMqfTlzzn2uKm7IXh/U2bPPGAzoRyfJF9VWNT5uir6c0VBLF5Yy2oBLrZCba8VtcftbIVtH5u40xuerozqr+raMZKWd92Lhe+SmBxVa3TV68l7OR4Lkvl5xo/tZcR2ZjwLyGwloeKW38i+RLV3uIXaWOjPK6JCFj16IK92SoMbcQRsMabej3j8x8ceU4BZJfGMTiTOGGf+u/3TgTjWTHqwiCeWvMp/XtqqSMq9DY05G3gxXW/L1wLLf4rs1VzqZtuehOYYwL37Wq0vi5vMdetkpmnRiU0rT8M6ZxeUWD7qQXyPIeEPxLaUBkjg3f8cWYs6+zM8OoS73qvzjv0Vp1C8ZVBkv1/mJR7vPDhkKX5i5cybPSEJcfAsBwO71sl9obT8yEOeTfOs4yO9cxcQZK9cPp1756eOdP/SV6YVRc6L+bzUbE4axK5n/rHnfP40dZKhY+esIv3a31blBaRAtNvM4hcOvmYRZ/0JPwTeeLrmIa3FrDA1VCSd89Et6F++T/br8W3RA=
