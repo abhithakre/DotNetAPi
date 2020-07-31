@@ -15,7 +15,8 @@ jobs:
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting
         fetch-depth: 0
-    - name: SonarCloud Scan
+    - name: dotnet sonarscanner begin /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url="https://sonarcloud.io" /k:githubismicrosoft_ToDoApi-octo-garbanzo /o:githubismicrosoft 
+
       uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.MYGITHUB_TOKEN }}
