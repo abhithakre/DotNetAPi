@@ -1,23 +1,44 @@
 on: push
 name: Main Workflow
 jobs:
-  sonarQubeTrigger:
-    name: SonarQube Trigger
+  sonar_scanner:   
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Sonarscanner for dotnet
-      uses: sonarsource/sonarcloud-github-action@master
-      with:
-        buildCommand: dotnet build .
-        testCommand: dotnet test .
-        projectKey: abhithakre_DotNetAPi
-        projectName: abhithakre
-        sonarOrganisation: abhithakre
-        beginArguments: >
-            /d:sonar.verbose="true"
-            /d:sonar.cs.opencover.reportsPaths='"/path/to/coverage.xml","/path/to/coverage.2.xml"'
-            /d:sonar.coverage.exclusions='"**/*.cs","**/*.md"'
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.MYGITHUB_TOKEN }}
+      - name: Checkout code for scanning
+        uses: actions/checkout@v1
+
+#       - name: Analyze with Sonar Cloud
+
+#         uses: sonarsource/sonarcloud-github-action@master
+
+#         env:
+
+#           GITHUB_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
+
+#           SONAR_TOKEN:  ${{ secrets.SONAR_TOKEN }}
+
+      - name: Checking MSBuild
+
+        run: |
+
+          dotnet tool install --global dotnet-sonarscanner 
+
+          dotnet sonarscanner begin /k:"abhithakre_DotNetAPi" /o:"abhithakre" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=${{ secrets.SONAR_TOKEN }}
+
+          dotnet build ./AngularWebAPi.sln
+
+          dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
+
+        env:
+
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          
+
+      - name: Install git version
+
+        uses: gittools/actions/gitversion/setup@v0.9.2
+
+        with:
+         versionSpec: '5.2.x'
+      
