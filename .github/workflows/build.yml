@@ -24,8 +24,8 @@ jobs:
           dotnet tool install --global dotnet-sonarscanner 
 
           dotnet sonarscanner begin /k:"abhithakre_DotNetAPi" /o:"abhithakre" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=${{ secrets.SONAR_TOKEN }}
-
-          dotnet build ./AngularWebAPi.sln
+          dotnet restore
+          dotnet build --configuration Release --no-restore
 
           dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
 
