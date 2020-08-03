@@ -5,9 +5,9 @@ jobs:
     name: SonarQube Trigger
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: Sonarscanner for dotnet
-      uses: Secbyte/dotnet-sonarscanner@v2.3
+      uses: actions/setup-dotnet@v1
       with:
         buildCommand: dotnet build .
         testCommand: dotnet test .
