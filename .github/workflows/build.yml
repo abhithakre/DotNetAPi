@@ -1,4 +1,4 @@
-name: "Assign pr-bot"
+name: "Auto review"
 on:
   pull_request:
     types: [opened,ready_for_review]
