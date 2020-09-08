@@ -1,0 +1,15 @@
+name: "Auto review"
+on:
+  pull_request:
+    types: [opened,ready_for_review]
+
+jobs:
+  assign-reviewers:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Request review from pr-bot"
+      uses: rowi1de/auto-assign-review-teams@v.1.0.1
+      with:
+        repo-token: ${{ secrets.MYGITHUB_TOKEN }}
+        persons: "abhithakre"
+        include-draft: false
